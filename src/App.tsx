@@ -322,19 +322,11 @@ function App() {
               “Where Ideas Become Reliable Solutions”
             </p>
             <p
-              className={`mt-4 text-lg transition-all duration-900 delay-150 ease-out sm:text-xl ${
-                isDark ? 'text-slate-200' : 'text-indigo-50'
-              } ${homeVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
-            >
-              Full Stack Developer
-            </p>
-            <p
               className={`mt-4 max-w-xl text-base leading-7 transition-all duration-900 delay-200 ease-out sm:mt-5 sm:max-w-2xl sm:text-[17px] sm:leading-relaxed ${
                 isDark ? 'text-slate-300' : 'text-indigo-100'
               } ${homeVisible ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'}`}
             >
-              I build clean, scalable web applications that turn student and client ideas into
-              reliable, professionally delivered solutions.
+              I build clean, scalable web applications for students and clients.
             </p>
 
             <div
@@ -343,7 +335,6 @@ function App() {
               }`}
             >
               <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1.5 transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/15 sm:px-4 sm:py-2">15+ Projects Delivered</span>
-              <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1.5 transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/15 sm:px-4 sm:py-2">Student & Client Focused Solutions</span>
               <span className="rounded-full border border-white/30 bg-white/10 px-3 py-1.5 transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white/15 sm:px-4 sm:py-2">Clean Architecture Approach</span>
             </div>
 
