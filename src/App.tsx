@@ -26,7 +26,7 @@ import {
   HiEnvelope,
   HiPhone,
 } from 'react-icons/hi2'
-import profileImage from './assets/profile.png'
+import profileImage from './assets/updated profile.jpg'
 
 function App() {
   const navItems = useMemo(() => ['Home', 'About', 'Skills', 'Services', 'Contact'], [])
