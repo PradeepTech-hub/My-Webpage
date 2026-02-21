@@ -176,17 +176,23 @@ function App() {
                 <li key={item}>
                   <button
                     onClick={() => goToSection(item)}
-                    className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`relative rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-300 ${
                       isActive
                         ? isDark
-                          ? 'bg-purple-600/30 text-purple-200'
-                          : 'bg-white/25 text-white'
+                          ? 'text-white'
+                          : 'text-white'
                         : isDark
-                          ? 'text-slate-300 hover:text-white'
-                          : 'text-indigo-50/95 hover:text-white'
+                          ? 'text-slate-300 hover:bg-white/10 hover:text-white'
+                          : 'text-indigo-50/95 hover:bg-white/15 hover:text-white'
                     }`}
                   >
-                    {item}
+                    <span className="relative z-10">{item}</span>
+                    <span
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute bottom-1 left-3 right-3 h-0.5 origin-left rounded-full bg-white transition-transform duration-300 ${
+                        isActive ? 'scale-x-100' : 'scale-x-0'
+                      }`}
+                    />
                   </button>
                 </li>
               )
@@ -227,20 +233,33 @@ function App() {
             }`}
           >
             <ul className="space-y-2">
-              {navItems.map((item) => (
-                <li key={item}>
-                  <button
-                    onClick={() => goToSection(item)}
-                    className={`w-full rounded-md px-3 py-2 text-left text-sm font-medium transition ${
-                      isDark
-                        ? 'text-slate-200 hover:bg-slate-800'
-                        : 'text-indigo-50 hover:bg-white/20'
-                    }`}
-                  >
-                    {item}
-                  </button>
-                </li>
-              ))}
+              {navItems.map((item) => {
+                const isActive = activeSection === item
+                return (
+                  <li key={item}>
+                    <button
+                      onClick={() => goToSection(item)}
+                      className={`relative w-full rounded-md px-3 py-2 text-left text-sm font-medium transition-colors duration-300 ${
+                        isActive
+                          ? isDark
+                            ? 'text-white'
+                            : 'text-white'
+                          : isDark
+                            ? 'text-slate-200 hover:bg-slate-800'
+                            : 'text-indigo-50 hover:bg-white/20'
+                      }`}
+                    >
+                      <span className="relative z-10">{item}</span>
+                      <span
+                        aria-hidden="true"
+                        className={`pointer-events-none absolute bottom-1 left-3 right-3 h-0.5 origin-left rounded-full bg-white transition-transform duration-300 ${
+                          isActive ? 'scale-x-100' : 'scale-x-0'
+                        }`}
+                      />
+                    </button>
+                  </li>
+                )
+              })}
             </ul>
           </div>
         )}
