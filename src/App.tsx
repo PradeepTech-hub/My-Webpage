@@ -26,7 +26,7 @@ import {
   HiEnvelope,
   HiPhone,
 } from 'react-icons/hi2'
-import profileImage from './assets/updated profile.jpg'
+import profileImage from './assets/profile.jpg'
 
 function App() {
   const navItems = useMemo(() => ['Home', 'About', 'Skills', 'Services', 'Contact'], [])
@@ -362,11 +362,16 @@ function App() {
                   aboutVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
                 }`}
               >
-                <div className="overflow-hidden rounded-[1.8rem]">
+                <div
+                  className={`pointer-events-none absolute -inset-2 rounded-[2.2rem] blur-2xl transition-opacity duration-500 ${
+                    isDark ? 'bg-fuchsia-400/25' : 'bg-violet-300/45'
+                  } opacity-0 group-hover:opacity-100`}
+                />
+                <div className="relative overflow-hidden rounded-[1.8rem]">
                   <img
                     src={profileImage}
                     alt="Pradeep M"
-                    className={`w-full rounded-[1.8rem] object-cover shadow-lg transition-all duration-300 group-hover:shadow-xl ${
+                    className={`w-full rounded-[1.8rem] object-cover shadow-lg transition-all duration-500 group-hover:scale-105 group-hover:shadow-xl ${
                       isDark
                         ? 'shadow-black/35 group-hover:shadow-black/50'
                         : 'shadow-slate-400/30 group-hover:shadow-slate-500/35'
