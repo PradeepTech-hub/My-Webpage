@@ -1,73 +1,70 @@
-# React + TypeScript + Vite
+# Freelancer Portfolio (React + Vite + TypeScript)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This portfolio includes a working contact form that sends:
 
-Currently, two official plugins are available:
+1. The visitor message to `pradeepshetty.m003@gmail.com`
+2. An automatic acknowledgment email back to the visitor
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+It uses EmailJS in the browser.
 
-## React Compiler
+## 1) Install and run
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 2) Configure EmailJS
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env` file in the project root by copying `.env.example`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Required variables:
+
+```dotenv
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id_here
+VITE_EMAILJS_OWNER_TEMPLATE_ID=your_emailjs_owner_template_id_here
+VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID=your_emailjs_auto_reply_template_id_here
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
 ```
+
+Restart the Vite server after editing `.env`.
+
+## 3) EmailJS templates
+
+Create two templates in EmailJS:
+
+- Owner template (`VITE_EMAILJS_OWNER_TEMPLATE_ID`)
+  - Recipient should resolve to `to_email` (passed from app as `pradeepshetty.m003@gmail.com`)
+  - Suggested fields: `{{from_name}}`, `{{from_email}}`, `{{message}}`, `{{reply_to}}`
+
+- Auto-reply template (`VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID`)
+  - Recipient should resolve to `to_email` (passed from app as visitor email)
+  - Suggested fields: `{{to_name}}`, `{{from_name}}`, `{{message}}`
+
+If your template uses different variable names, update them in `src/App.tsx` accordingly.
+
+## 4) Build
+
+```bash
+npm run build
+```
+
+## 5) Vercel deployment checklist
+
+For hosted usage, Vercel must have the same EmailJS env variables at build time.
+
+1. Go to Vercel -> Project -> Settings -> Environment Variables.
+2. Add all four variables for at least `Production` (and `Preview` if needed):
+
+```dotenv
+VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id_here
+VITE_EMAILJS_OWNER_TEMPLATE_ID=your_emailjs_owner_template_id_here
+VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID=your_emailjs_auto_reply_template_id_here
+VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
+```
+
+3. Redeploy the project (environment variable changes are applied only after rebuild).
+4. In EmailJS dashboard, allow your deployed domains (for example `https://<your-project>.vercel.app` and your custom domain) in the service/template security settings.
+5. Submit the contact form from the deployed site and verify:
+  - Owner email arrives at `pradeepshetty.m003@gmail.com`
+  - Auto-reply arrives at the visitor's email

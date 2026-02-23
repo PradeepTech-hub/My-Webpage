@@ -1,4 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
+import emailjs from '@emailjs/browser'
+import { ToastContainer, toast } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import {
   SiCss3,
   SiFigma,
@@ -34,6 +37,22 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [theme, setTheme] = useState<'dark' | 'light'>('light')
   const [visibleSections, setVisibleSections] = useState<Record<string, boolean>>({})
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    message: '',
+  })
+  const [contactError, setContactError] = useState('')
+  const [contactSuccess, setContactSuccess] = useState('')
+  const [isSending, setIsSending] = useState(false)
+
+  const emailJsServiceId = (import.meta.env.VITE_EMAILJS_SERVICE_ID as string | undefined)?.trim()
+  const emailJsOwnerTemplateId =
+    (import.meta.env.VITE_EMAILJS_OWNER_TEMPLATE_ID as string | undefined)?.trim()
+  const emailJsAutoReplyTemplateId =
+    (import.meta.env.VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID as string | undefined)?.trim()
+  const emailJsPublicKey = (import.meta.env.VITE_EMAILJS_PUBLIC_KEY as string | undefined)?.trim()
+  const ownerEmail = 'pradeepshetty.m003@gmail.com'
 
   useEffect(() => {
     const sectionElements = navItems
@@ -144,6 +163,124 @@ function App() {
   const cardReveal = (delayClass: string) =>
     `transition-all duration-700 ${delayClass} ${servicesVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`
 
+  const handleContactFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target
+    setContactForm((previous) => ({ ...previous, [name]: value }))
+  }
+
+  const handleContactSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+
+    const trimmedName = contactForm.name.trim()
+    const trimmedEmail = contactForm.email.trim()
+    const trimmedMessage = contactForm.message.trim()
+
+    if (!trimmedName || !trimmedEmail || !trimmedMessage) {
+      setContactError('Please fill in your name, email, and message before sending.')
+      setContactSuccess('')
+      return
+    }
+
+    const missingEmailConfig = [
+      !emailJsServiceId ? 'VITE_EMAILJS_SERVICE_ID' : '',
+      !emailJsOwnerTemplateId ? 'VITE_EMAILJS_OWNER_TEMPLATE_ID' : '',
+      !emailJsAutoReplyTemplateId ? 'VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID' : '',
+      !emailJsPublicKey ? 'VITE_EMAILJS_PUBLIC_KEY' : '',
+    ].filter(Boolean)
+
+    if (missingEmailConfig.length > 0) {
+      const configTarget = import.meta.env.PROD
+        ? 'Vercel Project Settings → Environment Variables (Production/Preview), then redeploy'
+        : 'your local .env file, then restart Vite'
+
+      setContactError(
+        `Email service is not configured yet. Missing: ${missingEmailConfig.join(', ')}. Add them in ${configTarget}.`,
+      )
+      setContactSuccess('')
+      return
+    }
+
+    setContactError('')
+    setContactSuccess('')
+    setIsSending(true)
+
+    const serviceId = emailJsServiceId as string
+    const ownerTemplateId = emailJsOwnerTemplateId as string
+    const autoReplyTemplateId = emailJsAutoReplyTemplateId as string
+    const publicKey = emailJsPublicKey as string
+
+    try {
+      await emailjs.send(
+        serviceId,
+        ownerTemplateId,
+        {
+          name: trimmedName,
+          email: trimmedEmail,
+          user_name: trimmedName,
+          user_email: trimmedEmail,
+          from_name: trimmedName,
+          from_email: trimmedEmail,
+          reply_to: trimmedEmail,
+          message: trimmedMessage,
+          user_message: trimmedMessage,
+          subject: `New contact form message from ${trimmedName}`,
+          to_name: 'Pradeep',
+          to_email: ownerEmail,
+          owner_email: ownerEmail,
+        },
+        {
+          publicKey,
+        },
+      )
+
+      await emailjs.send(
+        serviceId,
+        autoReplyTemplateId,
+        {
+          name: trimmedName,
+          email: trimmedEmail,
+          user_name: trimmedName,
+          user_email: trimmedEmail,
+          from_name: 'Pradeep',
+          from_email: ownerEmail,
+          reply_to: ownerEmail,
+          message: trimmedMessage,
+          user_message: trimmedMessage,
+          subject: `Thanks for contacting me, ${trimmedName}`,
+          to_name: trimmedName,
+          to_email: trimmedEmail,
+          owner_email: ownerEmail,
+        },
+        {
+          publicKey,
+        },
+      )
+
+      setContactForm({ name: '', email: '', message: '' })
+      setContactSuccess('Message sent successfully. I will get back to you soon.')
+      toast.success('Message sent successfully! I will get back to you soon.')
+    } catch (error) {
+      const errorStatus =
+        typeof error === 'object' && error !== null && 'status' in error
+          ? (error.status as number | undefined)
+          : undefined
+      const errorText =
+        typeof error === 'object' && error !== null && 'text' in error
+          ? String(error.text)
+          : 'Unknown EmailJS error'
+
+      if (errorStatus === 422) {
+        setContactError(`Email service rejected the request (422): ${errorText}`)
+      } else {
+        setContactError(`Unable to send message right now: ${errorText}`)
+      }
+    } finally {
+      setIsSending(false)
+    }
+  }
+
   return (
     <div
       className={`min-h-screen transition-colors duration-500 ${
@@ -152,6 +289,17 @@ function App() {
           : 'bg-gradient-to-b from-slate-50 via-indigo-50 to-purple-100 text-slate-800'
       }`}
     >
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme={isDark ? 'dark' : 'light'}
+      />
+
       <header
         className={`fixed inset-x-0 top-0 z-50 border-b backdrop-blur-md transition-colors duration-500 ${
           isDark
@@ -668,10 +816,14 @@ function App() {
                 <span>808850339</span>
               </p>
             </div>
-            <form className="mt-8 space-y-5 text-left">
+            <form className="mt-8 space-y-5 text-left" onSubmit={handleContactSubmit}>
             <input
               type="text"
+              name="name"
               placeholder="Name"
+              value={contactForm.name}
+              onChange={handleContactFieldChange}
+              required
               className={`w-full rounded-xl border px-4 py-3 outline-none transition-all duration-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 ${
                 isDark
                   ? 'border-slate-700 bg-slate-900/70 text-slate-100 placeholder-slate-400'
@@ -680,7 +832,11 @@ function App() {
             />
             <input
               type="email"
+              name="email"
               placeholder="Email"
+              value={contactForm.email}
+              onChange={handleContactFieldChange}
+              required
               className={`w-full rounded-xl border px-4 py-3 outline-none transition-all duration-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 ${
                 isDark
                   ? 'border-slate-700 bg-slate-900/70 text-slate-100 placeholder-slate-400'
@@ -688,19 +844,30 @@ function App() {
               }`}
             />
             <textarea
+              name="message"
               placeholder="Message"
               rows={5}
+              value={contactForm.message}
+              onChange={handleContactFieldChange}
+              required
               className={`w-full rounded-xl border px-4 py-3 outline-none transition-all duration-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/30 ${
                 isDark
                   ? 'border-slate-700 bg-slate-900/70 text-slate-100 placeholder-slate-400'
                   : 'border-slate-300 bg-white/90 text-slate-800 placeholder-slate-500'
               }`}
             />
+            {contactError && (
+              <p className={`text-sm ${isDark ? 'text-rose-300' : 'text-rose-600'}`}>{contactError}</p>
+            )}
+            {contactSuccess && (
+              <p className={`text-sm ${isDark ? 'text-emerald-300' : 'text-emerald-700'}`}>{contactSuccess}</p>
+            )}
             <button
               type="submit"
-              className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01]"
+              disabled={isSending}
+              className="w-full rounded-xl bg-gradient-to-r from-purple-600 to-fuchsia-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Send Message
+              {isSending ? 'Sending...' : 'Send Message'}
             </button>
             </form>
 
