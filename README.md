@@ -1,70 +1,36 @@
-# Freelancer Portfolio (React + Vite + TypeScript)
+# 🚀 Pradeep Tech Hub – Professional Portfolio
 
-This portfolio includes a working contact form that sends:
+Pradeep Tech Hub is a modern, performance-focused freelancer portfolio built with React, Vite, and TypeScript.  
+It represents a professional digital presence designed to showcase skills, services, and project expertise in a clean and impactful way.
 
-1. The visitor message to `pradeepshetty.m003@gmail.com`
-2. An automatic acknowledgment email back to the visitor
+## ✨ Key Highlights
 
-It uses EmailJS in the browser.
+- Clean, modern, and fully responsive UI
+- Built with React + TypeScript for scalability and maintainability
+- Lightning-fast performance powered by Vite
+- Professional contact system powered by EmailJS
+- Automatic email acknowledgment for client inquiries
+- Deployed for live production use
 
-## 1) Install and run
+## 📩 Smart Contact System
 
-```bash
-npm install
-npm run dev
-```
+The portfolio includes an integrated contact form that:
 
-## 2) Configure EmailJS
+- Sends client inquiries directly to the business email
+- Automatically replies to the visitor with a confirmation message
+- Operates securely without requiring a backend server
 
-Create a `.env` file in the project root by copying `.env.example`.
+This ensures seamless communication between potential clients and the business.
 
-Required variables:
+## 🎯 Project Vision
 
-```dotenv
-VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id_here
-VITE_EMAILJS_OWNER_TEMPLATE_ID=your_emailjs_owner_template_id_here
-VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID=your_emailjs_auto_reply_template_id_here
-VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
-```
+This project is designed to establish a strong professional identity online, enabling:
 
-Restart the Vite server after editing `.env`.
+- Clear presentation of technical expertise
+- Easy client engagement
+- Reliable communication workflow
+- A modern and trustworthy digital brand presence
 
-## 3) EmailJS templates
+---
 
-Create two templates in EmailJS:
-
-- Owner template (`VITE_EMAILJS_OWNER_TEMPLATE_ID`)
-  - Recipient should resolve to `to_email` (passed from app as `pradeepshetty.m003@gmail.com`)
-  - Suggested fields: `{{from_name}}`, `{{from_email}}`, `{{message}}`, `{{reply_to}}`
-
-- Auto-reply template (`VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID`)
-  - Recipient should resolve to `to_email` (passed from app as visitor email)
-  - Suggested fields: `{{to_name}}`, `{{from_name}}`, `{{message}}`
-
-If your template uses different variable names, update them in `src/App.tsx` accordingly.
-
-## 4) Build
-
-```bash
-npm run build
-```
-
-## 5) Vercel deployment checklist
-
-For hosted usage, Vercel must have the same EmailJS env variables at build time.
-
-1. Go to Vercel -> Project -> Settings -> Environment Variables.
-2. Add all four variables for at least `Production` (and `Preview` if needed):
-
-```dotenv
-VITE_EMAILJS_SERVICE_ID=your_emailjs_service_id_here
-VITE_EMAILJS_OWNER_TEMPLATE_ID=your_emailjs_owner_template_id_here
-VITE_EMAILJS_AUTO_REPLY_TEMPLATE_ID=your_emailjs_auto_reply_template_id_here
-VITE_EMAILJS_PUBLIC_KEY=your_emailjs_public_key_here
-```
-
-3. Redeploy the project (environment variable changes are applied only after rebuild).
-4. In EmailJS dashboard, allow your deployed domains (for example `https://<your-project>.vercel.app` and your custom domain) in the service/template security settings.
-5. Submit the contact form from the deployed site and verify:
-  - Owner email arrives at `pradeepshetty.m003@gmail.com`
-  - Auto-reply arrives at the visitor's email
+Built to reflect professionalism, performance, and practical real-world functionality.
